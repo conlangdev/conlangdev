@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  mariadb:
+    image: mariadb:10.4
+    restart: always
+    container_name: mariadb
+    environment:
+      MYSQL_DATABASE: conlangdev_db
+      MYSQL_USER: conlangdev_user
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: /usr/bin/mysql conlangdev_db --user=conlangdev_user --password=${MYSQL_PASSWORD} --execute "SHOW DATABASES;"
+      interval: 3s
+      timeout: 5s
+      retries: 5
+  api:
+    build:
+      context: .
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      CONLANGDEV_ADDR: ":8000"
+      MYSQL_HOST: mariadb
+      MYSQL_DATABASE: conlangdev_db
+      MYSQL_USER: conlangdev_user
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - "8000:8000"
+volumes:
+  db:

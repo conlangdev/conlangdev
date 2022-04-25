@@ -7,11 +7,26 @@ import (
 	"syscall"
 
 	"github.com/conlangdev/conlangdev/server"
+	"github.com/conlangdev/conlangdev/sql"
 	log "github.com/sirupsen/logrus"
 )
 
 func Run() error {
-	server := server.NewServer()
+	database := sql.NewDB(
+		os.Getenv("MYSQL_HOST"),
+		os.Getenv("MYSQL_USER"),
+		os.Getenv("MYSQL_PASSWORD"),
+		os.Getenv("MYSQL_DATABASE"),
+	)
+	if err := database.Open(); err != nil {
+		return err
+	}
+
+	server := server.
+		NewServer().
+		WithAddr(os.Getenv("CONLANGDEV_ADDR")).
+		WithUserService(sql.NewUserService(database)).
+		WithLanguageService(sql.NewLanguageService(database))
 	if err := server.Open(); err != nil {
 		return err
 	}
