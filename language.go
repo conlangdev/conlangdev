@@ -22,6 +22,7 @@ type LanguageUpdate struct {
 
 type LanguageService interface {
 	GetLanguageByID(ctx context.Context, id uint) (*Language, error)
+	GetLanguageByUserAndSlug(ctx context.Context, user *User, slug string) (*Language, error)
 	CreateLanguage(ctx context.Context, language *Language) error
 	UpdateLanguage(ctx context.Context, language *Language, update LanguageUpdate) error
 	DeleteLanguage(ctx context.Context, language *Language) error

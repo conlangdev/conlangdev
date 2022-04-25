@@ -19,6 +19,10 @@ func (s *LanguageService) GetLanguageByID(ctx context.Context, id uint) (*conlan
 	return nil, errors.New("not implemented")
 }
 
+func (s *LanguageService) GetLanguageByUserAndSlug(ctx context.Context, user *conlangdev.User, slug string) (*conlangdev.Language, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (s *LanguageService) CreateLanguage(ctx context.Context, language *conlangdev.Language) error {
 	return errors.New("not implemented")
 }
