@@ -15,10 +15,10 @@ import (
 
 func Run() error {
 	database := sql.NewDB(
-		os.Getenv("MYSQL_HOST"),
-		os.Getenv("MYSQL_USER"),
-		os.Getenv("MYSQL_PASSWORD"),
-		os.Getenv("MYSQL_DATABASE"),
+		os.Getenv("MARIADB_HOST"),
+		os.Getenv("MARIADB_USER"),
+		os.Getenv("MARIADB_PASSWORD"),
+		os.Getenv("MARIADB_DATABASE"),
 	)
 	if err := database.Open(); err != nil {
 		return err
@@ -56,7 +56,7 @@ func Migrate() error {
 }
 
 func PrintUsage() {
-	fmt.Println("usage: conlangdev-api [command]")
+	fmt.Println("usage: conlangdev [command]")
 	fmt.Println("commands:")
 	fmt.Println("- run: runs the web server")
 	fmt.Println("- migrate: prepares sql database")

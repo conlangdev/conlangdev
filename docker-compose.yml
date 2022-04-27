@@ -7,12 +7,12 @@ services:
     environment:
       MYSQL_DATABASE: conlangdev_db
       MYSQL_USER: conlangdev_user
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_PASSWORD: "${MARIADB_PASSWORD}"
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
     volumes:
       - db:/var/lib/mysql
     healthcheck:
-      test: /usr/bin/mysql conlangdev_db --user=conlangdev_user --password=${MYSQL_PASSWORD} --execute "SHOW DATABASES;"
+      test: /usr/bin/mysql conlangdev_db --user=conlangdev_user --password=${MARIADB_PASSWORD} --execute "SHOW DATABASES;"
       interval: 3s
       timeout: 5s
       retries: 5
@@ -25,10 +25,10 @@ services:
     environment:
       CONLANGDEV_ADDR: ":8000"
       CONLANGDEV_JWT_SECRET: "${CONLANGDEV_JWT_SECRET}"
-      MYSQL_HOST: mariadb
-      MYSQL_DATABASE: conlangdev_db
-      MYSQL_USER: conlangdev_user
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MARIADB_HOST: mariadb
+      MARIADB_DATABASE: conlangdev_db
+      MARIADB_USER: conlangdev_user
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD}"
     ports:
       - "8000:8000"
 volumes:
