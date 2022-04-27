@@ -18,12 +18,13 @@ type FieldsError struct {
 }
 
 const (
-	ECONFLICT     = "conflict"
-	ESERVER       = "server_error"
-	EBADREQUEST   = "bad_request"
-	EVALIDFAIL    = "validation_failed"
-	ENOTFOUND     = "not_found"
-	EUNAUTHORIZED = "unauthorized"
+	ECONFLICT       = "conflict"
+	ESERVER         = "server_error"
+	EBADREQUEST     = "bad_request"
+	EVALIDFAIL      = "validation_failed"
+	ENOTFOUND       = "not_found"
+	EUNAUTHORIZED   = "unauthorized"
+	ENOTIMPLEMENTED = "not_implemented"
 )
 
 func (e *Error) Error() string {
