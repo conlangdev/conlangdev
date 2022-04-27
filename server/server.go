@@ -139,11 +139,9 @@ func handleError(err error) http.Handler {
 func (s *Server) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if h := r.Header.Get("Authorization"); strings.HasPrefix(h, "Bearer ") {
-			log.Infof("Attempting authorization via %s", h)
 			jwt := strings.TrimPrefix(h, "Bearer ")
 			user, err := s.UserService.GetUserByJWT(r.Context(), jwt)
 			if err == nil && user != nil {
-				log.Infof("User has been found: %s", user.Username)
 				r = r.WithContext(conlangdev.NewContextWithUser(r.Context(), user))
 			}
 		}
