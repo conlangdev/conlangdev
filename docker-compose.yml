@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   mariadb:
-    image: mariadb:10.4
+    image: mariadb:10.6
     restart: always
     container_name: mariadb
     environment:
@@ -24,6 +24,7 @@ services:
         condition: service_healthy
     environment:
       CONLANGDEV_ADDR: ":8000"
+      CONLANGDEV_JWT_SECRET: "${CONLANGDEV_JWT_SECRET}"
       MYSQL_HOST: mariadb
       MYSQL_DATABASE: conlangdev_db
       MYSQL_USER: conlangdev_user
