@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/conlangdev/conlangdev/server"
 	"github.com/conlangdev/conlangdev/sql"
+	"github.com/go-playground/validator/v10"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,11 +24,18 @@ func Run() error {
 		return err
 	}
 
+	jwtSecret, ok := os.LookupEnv("CONLANGDEV_JWT_SECRET")
+	if !ok {
+		return errors.New("no CONLANGDEV_JWT_SECRET environment variable found")
+	}
+
+	validate := validator.New()
 	server := server.
 		NewServer().
 		WithAddr(os.Getenv("CONLANGDEV_ADDR")).
-		WithUserService(sql.NewUserService(database)).
-		WithLanguageService(sql.NewLanguageService(database))
+		WithUserService(sql.NewUserService(database, validate, jwtSecret)).
+		WithLanguageService(sql.NewLanguageService(database, validate)).
+		WithWordService(sql.NewWordService(database, validate))
 	if err := server.Open(); err != nil {
 		return err
 	}
