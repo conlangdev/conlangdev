@@ -5,14 +5,16 @@ import (
 	"errors"
 
 	"github.com/conlangdev/conlangdev"
+	"github.com/go-playground/validator/v10"
 )
 
 type WordService struct {
-	db *DB
+	db       *DB
+	validate *validator.Validate
 }
 
-func NewWordService(db *DB) *WordService {
-	return &WordService{db}
+func NewWordService(db *DB, validate *validator.Validate) *WordService {
+	return &WordService{db, validate}
 }
 
 func (s *WordService) GetWordByID(ctx context.Context, int uint) (*conlangdev.Word, error) {
