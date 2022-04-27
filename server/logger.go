@@ -19,6 +19,9 @@ type loggingResponseWriter struct {
 
 func (r *loggingResponseWriter) Write(b []byte) (int, error) {
 	size, err := r.ResponseWriter.Write(b)
+	if r.responseData.status == 0 {
+		r.responseData.status = 200
+	}
 	r.responseData.size += size
 	return size, err
 }
