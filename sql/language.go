@@ -5,14 +5,16 @@ import (
 	"errors"
 
 	"github.com/conlangdev/conlangdev"
+	"github.com/go-playground/validator/v10"
 )
 
 type LanguageService struct {
-	db *DB
+	db       *DB
+	validate *validator.Validate
 }
 
-func NewLanguageService(db *DB) *LanguageService {
-	return &LanguageService{db}
+func NewLanguageService(db *DB, validate *validator.Validate) *LanguageService {
+	return &LanguageService{db, validate}
 }
 
 func (s *LanguageService) GetLanguageByID(ctx context.Context, id uint) (*conlangdev.Language, error) {

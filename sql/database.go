@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"errors"
@@ -104,7 +105,7 @@ func (db *DB) TestConnection() error {
 }
 
 func (db *DB) Open() (err error) {
-	connString := fmt.Sprintf("%s:%s@tcp(%s)/%s", db.User, db.Password, db.Host, db.Database)
+	connString := fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true", db.User, db.Password, db.Host, db.Database)
 	log.Info("📪 Connecting to the database...")
 	if db.db, err = sql.Open("mysql", connString); err != nil {
 		return err
@@ -123,4 +124,9 @@ func (db *DB) Close() error {
 		return db.db.Close()
 	}
 	return nil
+}
+
+// Syntax sugar helper function
+func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error) {
+	return db.db.BeginTx(ctx, opts)
 }
