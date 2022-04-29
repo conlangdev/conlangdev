@@ -39,6 +39,7 @@ func NewServer() *Server {
 	// Register routes
 	server.registerUserRoutes()
 	server.registerLanguageRoutes()
+	server.registerWordRoutes()
 
 	// Allocate handler to our router and return server
 	server.server.Handler = server.router.GetHandler()

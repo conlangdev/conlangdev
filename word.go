@@ -47,7 +47,7 @@ type WordService interface {
 	GetWordByID(ctx context.Context, id uint) (*Word, error)
 	GetWordByLanguageAndUID(ctx context.Context, language *Language, uid uint) (*Word, error)
 	FindWordsForLanguage(ctx context.Context, language *Language) ([]*Word, error)
-	CreateWord(ctx context.Context, create WordCreate) (*Word, error)
+	CreateWordForLanguage(ctx context.Context, language *Language, create WordCreate) (*Word, error)
 	UpdateWord(ctx context.Context, word *Word, update WordUpdate) error
 	DeleteWord(ctx context.Context, word *Word) error
 }
