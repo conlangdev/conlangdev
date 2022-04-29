@@ -51,8 +51,9 @@ func (s *Server) handleRegisterUser(w http.ResponseWriter, r *http.Request) {
 	var create conlangdev.UserCreate
 	if err := json.NewDecoder(r.Body).Decode(&create); err != nil {
 		handleError(&conlangdev.Error{
-			Code:    conlangdev.EBADREQUEST,
-			Message: "malformed request body",
+			Code:       conlangdev.EBADREQUEST,
+			Message:    "malformed request body",
+			StatusCode: http.StatusBadRequest,
 		}).ServeHTTP(w, r)
 		return
 	}
