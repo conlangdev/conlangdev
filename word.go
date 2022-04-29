@@ -43,10 +43,17 @@ type WordCreate struct {
 	Notes         string `json:"notes"`
 }
 
+type WordIndex struct {
+	ID         uint   `json:"id"`
+	UID        uint64 `json:"uid"`
+	Headword   string `json:"headword"`
+	Definition string `json:"definition"`
+}
+
 type WordService interface {
 	GetWordByID(ctx context.Context, id uint) (*Word, error)
 	GetWordByLanguageAndUID(ctx context.Context, language *Language, uid uint64) (*Word, error)
-	FindWordsForLanguage(ctx context.Context, language *Language) ([]*Word, error)
+	FindWordsForLanguage(ctx context.Context, language *Language) ([]*WordIndex, error)
 	CreateWordForLanguage(ctx context.Context, language *Language, create WordCreate) (*Word, error)
 	UpdateWord(ctx context.Context, word *Word, update WordUpdate) error
 	DeleteWord(ctx context.Context, word *Word) error

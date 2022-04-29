@@ -37,8 +37,16 @@ func (s *Server) handleIndexWord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := json.Marshal(map[string][]*conlangdev.Word{
-		"words": words,
+	userView, err := s.UserService.GetViewForUser(r.Context(), userx)
+	if err != nil {
+		handleError(err).ServeHTTP(w, r)
+		return
+	}
+
+	response, err := json.Marshal(map[string]interface{}{
+		"user":     userView,
+		"language": language,
+		"words":    words,
 	})
 	if err != nil {
 		handleError(err).ServeHTTP(w, r)

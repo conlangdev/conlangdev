@@ -74,7 +74,7 @@ func (s *WordService) GetWordByLanguageAndUID(ctx context.Context, language *con
 	); err == sql.ErrNoRows {
 		return nil, &conlangdev.Error{
 			Code:       conlangdev.ENOTFOUND,
-			Message:    "could not find that language",
+			Message:    "could not find that word",
 			StatusCode: http.StatusNotFound,
 		}
 	} else if err != nil {
@@ -84,7 +84,7 @@ func (s *WordService) GetWordByLanguageAndUID(ctx context.Context, language *con
 	return &word, nil
 }
 
-func (s *WordService) FindWordsForLanguage(ctx context.Context, language *conlangdev.Language) ([]*conlangdev.Word, error) {
+func (s *WordService) FindWordsForLanguage(ctx context.Context, language *conlangdev.Language) ([]*conlangdev.WordIndex, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -93,9 +93,7 @@ func (s *WordService) FindWordsForLanguage(ctx context.Context, language *conlan
 
 	rows, err := tx.QueryContext(ctx,
 		`SELECT
-			id, uid, created_at, updated_at, headword, part_of_speech,
-			definition, pronunciation, grammar_class, gender,
-			etymology, notes, language_id
+			id, uid, headword, definition
 		FROM words WHERE language_id = ?`,
 		language.ID,
 	)
@@ -104,13 +102,11 @@ func (s *WordService) FindWordsForLanguage(ctx context.Context, language *conlan
 	}
 	defer rows.Close()
 
-	words := make([]*conlangdev.Word, 0)
+	words := make([]*conlangdev.WordIndex, 0)
 	for rows.Next() {
-		var word conlangdev.Word
+		var word conlangdev.WordIndex
 		if err := rows.Scan(
-			&word.ID, &word.UID, &word.CreatedAt, &word.UpdatedAt, &word.Headword,
-			&word.PartOfSpeech, &word.Definition, &word.Pronunciation, &word.GrammarClass,
-			&word.Gender, &word.Etymology, &word.Notes, &word.LanguageID,
+			&word.ID, &word.UID, &word.Headword, &word.Definition,
 		); err != nil {
 			return nil, err
 		}
