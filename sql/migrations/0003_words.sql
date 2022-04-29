@@ -10,5 +10,5 @@ CREATE TABLE words (
     language_id INT NOT NULL,
     PRIMARY KEY(id),
     CONSTRAINT uc_language_slug UNIQUE(slug, language_id),
-    FOREIGN KEY (language_id) REFERENCES languages(id)
+    FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
 );
