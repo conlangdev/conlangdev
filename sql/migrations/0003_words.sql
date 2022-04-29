@@ -3,7 +3,6 @@ CREATE TABLE words (
     created_at DATETIME NOT NULL,
     updated_at DATETIME NOT NULL,
     headword VARCHAR(255) NOT NULL,
-    slug VARCHAR(255) NOT NULL,
     definition TEXT NOT NULL,
     etymology TEXT,
     notes TEXT,
