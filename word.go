@@ -7,7 +7,7 @@ import (
 
 type Word struct {
 	ID            uint      `json:"id"`
-	UID           uint      `json:"uid"`
+	UID           uint64    `json:"uid"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 	Headword      string    `json:"headword"`
@@ -45,7 +45,7 @@ type WordCreate struct {
 
 type WordService interface {
 	GetWordByID(ctx context.Context, id uint) (*Word, error)
-	GetWordByLanguageAndUID(ctx context.Context, language *Language, uid uint) (*Word, error)
+	GetWordByLanguageAndUID(ctx context.Context, language *Language, uid uint64) (*Word, error)
 	FindWordsForLanguage(ctx context.Context, language *Language) ([]*Word, error)
 	CreateWordForLanguage(ctx context.Context, language *Language, create WordCreate) (*Word, error)
 	UpdateWord(ctx context.Context, word *Word, update WordUpdate) error

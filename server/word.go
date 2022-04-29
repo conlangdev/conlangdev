@@ -12,7 +12,7 @@ import (
 func (s *Server) registerWordRoutes() {
 	s.router.Prefix("/word/{username}/{language}", func(word *Router) {
 		word.Handle(s.handleIndexWord).GET("")
-		word.Authorized(s.handleCreateWord).GET("")
+		word.Authorized(s.handleCreateWord).POST("")
 		word.Handle(s.handleViewWord).GET("/{word}")
 	})
 }
@@ -121,7 +121,7 @@ func (s *Server) handleViewWord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	word, err := s.WordService.GetWordByLanguageAndUID(r.Context(), language, uint(wordUID))
+	word, err := s.WordService.GetWordByLanguageAndUID(r.Context(), language, wordUID)
 	if err != nil {
 		handleError(err).ServeHTTP(w, r)
 		return

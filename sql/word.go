@@ -52,7 +52,7 @@ func (s *WordService) GetWordByID(ctx context.Context, id uint) (*conlangdev.Wor
 	return &word, nil
 }
 
-func (s *WordService) GetWordByLanguageAndUID(ctx context.Context, language *conlangdev.Language, uid uint) (*conlangdev.Word, error) {
+func (s *WordService) GetWordByLanguageAndUID(ctx context.Context, language *conlangdev.Language, uid uint64) (*conlangdev.Word, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
