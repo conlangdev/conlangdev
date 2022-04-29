@@ -63,7 +63,9 @@ func (s *Server) handleRegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := json.Marshal(user)
+	response, err := json.Marshal(map[string]*conlangdev.User{
+		"user": user,
+	})
 	if err != nil {
 		handleError(err).ServeHTTP(w, r)
 		return
