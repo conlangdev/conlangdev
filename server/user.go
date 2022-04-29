@@ -9,10 +9,14 @@ import (
 )
 
 func (s *Server) registerUserRoutes() {
-	s.router.HandleFunc("/user/{username}", s.handleViewUser).Methods("GET")
-	s.router.HandleFunc("/auth", s.handleCheckAuth).Methods("GET")
-	s.unauthenticatedRouter.HandleFunc("/auth/register", s.handleRegisterUser).Methods("POST")
-	s.unauthenticatedRouter.HandleFunc("/auth/login", s.handleLoginUser).Methods("POST")
+	s.router.Prefix("/user", func(user *Router) {
+		user.Handle(s.handleViewUser).GET("/{username}")
+	})
+	s.router.Prefix("/auth", func(auth *Router) {
+		auth.Handle(s.handleCheckAuth).GET("")
+		auth.Guest(s.handleLoginUser).POST("/login")
+		auth.Guest(s.handleRegisterUser).POST("/register")
+	})
 }
 
 func (s *Server) handleCheckAuth(w http.ResponseWriter, r *http.Request) {

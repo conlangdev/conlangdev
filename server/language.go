@@ -8,13 +8,14 @@ import (
 )
 
 func (s *Server) registerLanguageRoutes() {
-	s.authenticatedRouter.HandleFunc("/language", s.handleIndexLanguage).Methods("GET")
-	s.authenticatedRouter.HandleFunc("/language", s.handleCreateLanguage).Methods("POST")
+	s.router.Prefix("/language", func(language *Router) {
+		language.Authorized(s.handleCreateLanguage).POST("")
+		language.Authorized(s.handleIndexLanguage).GET("")
+	})
 }
 
-func (s *Server) handleIndexLanguage(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleIndexLanguage(w http.ResponseWriter, r *http.Request, user *conlangdev.User) {
 	// Find languages
-	user := conlangdev.GetUserFromContext(r.Context())
 	languages, err := s.LanguageService.FindLanguagesForUser(r.Context(), user)
 	if err != nil {
 		handleError(err).ServeHTTP(w, r)
@@ -31,7 +32,7 @@ func (s *Server) handleIndexLanguage(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func (s *Server) handleCreateLanguage(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleCreateLanguage(w http.ResponseWriter, r *http.Request, user *conlangdev.User) {
 	// Decode request body
 	var create conlangdev.LanguageCreate
 	if err := json.NewDecoder(r.Body).Decode(&create); err != nil {
@@ -42,8 +43,7 @@ func (s *Server) handleCreateLanguage(w http.ResponseWriter, r *http.Request) {
 		}).ServeHTTP(w, r)
 		return
 	}
-	// Get user & create language
-	user := conlangdev.GetUserFromContext(r.Context())
+	// Create language
 	language, err := s.LanguageService.CreateLanguageForUser(r.Context(), user, create)
 	if err != nil {
 		handleError(err).ServeHTTP(w, r)

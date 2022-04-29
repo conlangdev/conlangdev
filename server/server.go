@@ -9,17 +9,13 @@ import (
 	"time"
 
 	"github.com/conlangdev/conlangdev"
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
 type Server struct {
 	server   *http.Server
 	listener net.Listener
-
-	router                *mux.Router
-	authenticatedRouter   *mux.Router
-	unauthenticatedRouter *mux.Router
+	router   *Router
 
 	Addr string
 
@@ -30,28 +26,23 @@ type Server struct {
 
 func NewServer() *Server {
 	// Set up server object with base routers
-	router := mux.NewRouter().StrictSlash(true)
 	server := &Server{
-		server:                &http.Server{},
-		router:                router,
-		authenticatedRouter:   router.PathPrefix("/").Subrouter(),
-		unauthenticatedRouter: router.PathPrefix("/").Subrouter(),
+		server: &http.Server{},
+		router: NewRouter(),
 	}
 
 	// Add middleware
 	server.router.Use(contentTypeJSON)
 	server.router.Use(logger)
 	server.router.Use(server.authenticate)
-	server.authenticatedRouter.Use(server.requireAuthentication)
-	server.unauthenticatedRouter.Use(server.requireNoAuthentication)
 
 	// Register routes
 	server.registerUserRoutes()
 	server.registerLanguageRoutes()
 
 	// Allocate handler to our router and return server
-	server.server.Handler = http.HandlerFunc(server.router.ServeHTTP)
-	server.router.NotFoundHandler = http.HandlerFunc(handleNotFound)
+	server.server.Handler = server.router.GetHandler()
+	server.router.HandleNotFound(handleNotFound)
 	return server
 }
 
@@ -134,8 +125,8 @@ func handleError(err error) http.Handler {
 // request and places the authenticated user into the context, if any.
 //
 // This middleware does *not* specify whether a user must or must not
-// be authenticated to continue. For that, see `requireAuthentication`
-// and `requireNoAuthentication`.
+// be authenticated to continue. For that, see the route-building
+// functions `Router.Authorized()` and `Router.Guest()`
 func (s *Server) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if h := r.Header.Get("Authorization"); strings.HasPrefix(h, "Bearer ") {
@@ -147,33 +138,6 @@ func (s *Server) authenticate(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
-	})
-}
-
-// Middleware function which returns a 401 Unauthorized response if request
-// is not authenticated.
-func (s *Server) requireAuthentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if user := conlangdev.GetUserFromContext(r.Context()); user != nil {
-			next.ServeHTTP(w, r)
-			return
-		}
-		w.WriteHeader(http.StatusUnauthorized)
-	})
-}
-
-// Middleware function which returns a 404 Not Found response if request
-// is authenticated.
-//
-// Can be used for pages that authenticated users should
-// not access, such as login and register pages.
-func (s *Server) requireNoAuthentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if user := conlangdev.GetUserFromContext(r.Context()); user == nil {
-			next.ServeHTTP(w, r)
-			return
-		}
-		w.WriteHeader(http.StatusNotFound)
 	})
 }
 
